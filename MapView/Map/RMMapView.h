@@ -48,6 +48,7 @@
 @class RMAnnotation;
 @class RMQuadTree;
 @class RMUserLocation;
+@class SMCalloutView;
 
 // constants for the scrollview deceleration mode
 typedef enum : NSUInteger {
@@ -339,6 +340,8 @@ typedef enum : NSUInteger {
 *   @param annotation The annotation object to deselect.
 *   @param animated If `YES`, the callout view is animated offscreen. */
 - (void)deselectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated;
+
+- (SMCalloutView*)calloutViewForAnnotation:(RMAnnotation*)annotation;
 
 /** The annotation that is currently selected. */
 @property (nonatomic, strong) RMAnnotation *selectedAnnotation;
