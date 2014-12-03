@@ -66,6 +66,8 @@
 #define kDefaultMaximumZoomLevel 25.0
 #define kDefaultInitialZoomLevel 11.0
 
+#define AUTOLAYOUT_SUPPORTED (floor(NSFoundationVersionNumber) >  NSFoundationVersionNumber_iOS_5_1)
+
 #pragma mark --- end constants ----
 
 @interface RMMapView (PrivateMethods) <UIScrollViewDelegate,
@@ -368,7 +370,7 @@
 
     RMLog(@"Map initialised. tileSource:%@, minZoom:%f, maxZoom:%f, zoom:%f at {%f,%f}", newTilesource, self.minZoom, self.maxZoom, self.zoom, initialCenterCoordinate.longitude, initialCenterCoordinate.latitude);
 
-    [self setNeedsUpdateConstraints];
+    if(AUTOLAYOUT_SUPPORTED) [self setNeedsUpdateConstraints];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -531,7 +533,7 @@
     //
     if ( ! viewController)
     {
-        [super updateConstraints];
+        if(AUTOLAYOUT_SUPPORTED) [super updateConstraints];
         return;
     }
 
@@ -627,7 +629,7 @@
         }
     }
 
-    [super updateConstraints];
+    if(AUTOLAYOUT_SUPPORTED) [super updateConstraints];
 }
 
 - (void)layoutSubviews
@@ -1946,7 +1948,9 @@
 -(SMCalloutView*) calloutViewForAnnotation:(RMAnnotation *)annotation
 {
     SMCalloutView *callout = [SMCalloutView new];
-    callout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
+
+    if (RMPostVersion7)
+        callout.tintColor = self.tintColor;
     
     callout.title    = annotation.title;
     callout.subtitle = annotation.subtitle;
@@ -2671,9 +2675,11 @@
         _logoBug = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"mapbox.png"]];
         _logoBug.frame = CGRectMake(8, self.bounds.size.height - _logoBug.bounds.size.height - 4, _logoBug.bounds.size.width, _logoBug.bounds.size.height);
         _logoBug.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
-        _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
+        if (AUTOLAYOUT_SUPPORTED) _logoBug.translatesAutoresizingMaskIntoConstraints = NO;
+
+
         [self addSubview:_logoBug];
-        [self updateConstraints];
+        if(AUTOLAYOUT_SUPPORTED) [self updateConstraints];
     }
     else if ( ! showLogoBug && _logoBug)
     {
@@ -3883,7 +3889,7 @@
     {
         _attributionButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
         _attributionButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-        _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
+        if(AUTOLAYOUT_SUPPORTED) _attributionButton.translatesAutoresizingMaskIntoConstraints = NO;
         [_attributionButton addTarget:self action:@selector(showAttribution:) forControlEvents:UIControlEventTouchUpInside];
         _attributionButton.frame = CGRectMake(self.bounds.size.width - _attributionButton.bounds.size.width - 8,
                                               self.bounds.size.height - _attributionButton.bounds.size.height - 8,
